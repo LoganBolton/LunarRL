@@ -1,0 +1,22 @@
+import gymnasium as gym
+from stable_baselines3 import PPO
+
+# Load the environment with GUI rendering
+env = gym.make("LunarLander-v3", render_mode="human")
+
+# Load your trained PPO model
+model = PPO.load("ppo_lunarlander")
+
+# Run a single episode to watch it land
+obs, _ = env.reset()
+done = False
+total_reward = 0
+
+while not done:
+    action, _ = model.predict(obs, deterministic=True)  # deterministic = no randomness
+    obs, reward, terminated, truncated, _ = env.step(action)
+    total_reward += reward
+    done = terminated or truncated
+
+env.close()
+print(f"Total reward: {total_reward:.2f}")
