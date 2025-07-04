@@ -2,10 +2,22 @@ import gymnasium as gym
 import numpy as np
 from stable_baselines3 import PPO
 from env_wrapper import RewardWrapper
+from stable_baselines3.common.callbacks import BaseCallback
 
 # Create environment with custom reward
 env = gym.make("LunarLander-v3")
 env = RewardWrapper(env)
+
+class RewardLogger(BaseCallback):
+    def _on_step(self) -> bool:
+        if len(self.locals.get('infos', [])) > 0:
+            info = self.locals['infos'][0]
+            if 'reward_breakdown' in info:
+                breakdown = info['reward_breakdown']
+                if self.locals['dones'][0]:  # Only log on episode end
+                    for component, value in breakdown.items():
+                        self.logger.record(f"reward_terminal/{component}", value)
+        return True
 
 model = PPO(
     policy="MlpPolicy",
@@ -14,7 +26,8 @@ model = PPO(
     tensorboard_log="./ppo_lunar_tensorboard/"
 )
 
-model.learn(total_timesteps=400_000)
+callback = RewardLogger()
+model.learn(total_timesteps=900_000, callback=callback)
 model.save("ppo_lunarlander")
 
 # Test the trained model
