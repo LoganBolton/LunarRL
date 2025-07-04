@@ -14,8 +14,8 @@ class RewardWrapper(gym.Wrapper):
             'distance_to_pad': 3.0,      # Reward for being close to landing pad
             'leg_contact': 2.0,           # Reward for legs touching ground
             'landing_bonus': 2.0,         # Bonus for successful landing
-            'velocity_penalty': 1.0,      # Penalty for high velocity
-            'angle_penalty': 1.0,         # Penalty for being tilted
+            'velocity_penalty': 0.5,      # Penalty for high velocity
+            'angle_penalty': 0.5,         # Penalty for being tilted
             'main_engine_penalty': 1.0,   # Penalty for using main engine
             'side_engine_penalty': 1.0,   # Penalty for using side engines
             'crash_penalty': 4.0,         # Penalty for crashing
@@ -100,10 +100,10 @@ class RewardWrapper(gym.Wrapper):
         # 5. Engine usage penalties
         if action == 2:  # Main engine
             engine_penalty = -0.3 * self.reward_weights['main_engine_penalty']
-            reward += engine_penalty
+            # reward += engine_penalty
         elif action == 1 or action == 3:  # Side engines
             engine_penalty = -0.03 * self.reward_weights['side_engine_penalty']
-            reward += engine_penalty
+            # reward += engine_penalty
         
         # 6. Terminal rewards
         if terminated:

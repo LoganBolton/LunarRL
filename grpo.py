@@ -14,7 +14,7 @@ model = PPO(
     tensorboard_log="./ppo_lunar_tensorboard/"
 )
 
-model.learn(total_timesteps=500_000)
+model.learn(total_timesteps=400_000)
 model.save("ppo_lunarlander")
 
 # Test the trained model
